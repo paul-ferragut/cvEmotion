@@ -43,7 +43,6 @@
 bin/data/images/app_demo.gif
 bin/data/images/current_code_structure.png
 bin/data/images/future_work_multithreading.png
-bin/data/model/tensorflow_model.pb
 cvEmotion.vcxproj
 cvEmotion.vcxproj.filters
 cvEmotion.vcxproj.user
