@@ -52,3 +52,7 @@ obj/x64/Release/cvEmotion.log
 *.tlog
 obj/x64/Release/icon.res
 obj/x64/Release/vc143.pdb
+*.log
+*.sln
+obj/x64/Release/cvEmotion.vcxproj.FileListAbsolute.txt
+cvEmotion.sln
