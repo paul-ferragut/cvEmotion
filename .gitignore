@@ -1,0 +1,54 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.vsidx
+*.lock
+*.db
+.vs/cvEmotion/v17/.suo
+*.db-shm
+*.db-wal
+*.opendb
+*.bin
+*.ipch
+*.ipynb
+bin/data/images/app_demo.gif
+bin/data/images/current_code_structure.png
+bin/data/images/future_work_multithreading.png
+bin/data/model/tensorflow_model.pb
+cvEmotion.vcxproj
+cvEmotion.vcxproj.filters
+cvEmotion.vcxproj.user
+obj/x64/Release/cvEmotion.exe.recipe
+obj/x64/Release/cvEmotion.log
+*.tlog
+obj/x64/Release/icon.res
+obj/x64/Release/vc143.pdb
