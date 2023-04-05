@@ -55,3 +55,4 @@ obj/x64/Release/vc143.pdb
 *.sln
 obj/x64/Release/cvEmotion.vcxproj.FileListAbsolute.txt
 cvEmotion.sln
+*.exp

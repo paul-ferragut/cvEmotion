@@ -1,21 +1,14 @@
 #pragma once
 
-#include "FaceDetector.h"
-#include "Image.h"
-#include "Model.h"
-
-#include "ofxOpenCv.h"
 #include "ofMain.h"
-
-
-const std::string TENSORFLOW_MODEL_PATH = "C:/Users/plesk/Documents/Coding/of_v20230328_vs_release/apps/myApps/cvEmotion/bin/data/model/tensorflow_model.pb";
-const std::string FACE_DETECTOR_MODEL_PATH = "C:/Users/plesk/Documents/Coding/of_v20230328_vs_release/apps/myApps/cvEmotion/bin/data/model/haarcascade_frontalface_alt2.xml";
-
+#include "ofxCvHaarFinder.h"
+#include "ofxOpenCv.h"
+#include "Model.h"
+const std::string TENSORFLOW_MODEL_PATH = "C:/Users/plesk/Documents/coding/of_v0.11.2_vs2017_release/apps/myApps/cvEmotion/bin/data/model/tensorflow_model.pb";
 
 class ofApp : public ofBaseApp{
 
 	public:
-		
 		void setup();
 		void update();
 		void draw();
@@ -31,15 +24,8 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-
+		ofxCvHaarFinder finder;
+		Model model{ TENSORFLOW_MODEL_PATH };
 		ofVideoGrabber grabber;
 		ofxCvColorImage	colorImg;
-		
-		cv::Mat frame;
-
-		Model model{TENSORFLOW_MODEL_PATH};// error variable "TENSORFLOW_MODEL_PATH" is not a type name
-
-		FaceDetector face_detector;
-		Image image_and_ROI;
-
 };

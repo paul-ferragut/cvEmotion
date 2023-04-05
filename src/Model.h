@@ -4,7 +4,9 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
-#include "Image.h"
+//#include "Image.h"
+#include "ofMain.h"
+#include "ofxOpenCv.h"
 
 /**
  * Model class that contains code to read the pretrained tensorflow model and allows
@@ -20,7 +22,9 @@ public:
     ~Model() {};
 
     // Model inference function takes image input and outputs the prediction label and the probability
-    std::vector<std::string> predict(Image& image);
+    vector<string> predict(vector<cv::Mat>image);
+
+    vector<string>predictEmotions(cv::Mat image);
 
 private:
     // Neural network model
