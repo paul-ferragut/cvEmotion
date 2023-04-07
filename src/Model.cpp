@@ -2,7 +2,7 @@
 
 #include "Model.h"
 
-Model::Model(const std::string& model_filename) 
+Model::Model(const string& model_filename) 
     : network(cv::dnn::readNet(model_filename)), // Load the tensorflow model 
       classid_to_string({{0, "Angry"}, 
                          {1, "Disgust"}, 
@@ -13,25 +13,30 @@ Model::Model(const std::string& model_filename)
                          {6, "Neutral"}}) // Create a map from class id to the class labels
 {}
 
-void Model::modelCuda(bool useCuda)
+
+
+void Model::modelSetup(bool useCuda)
 {
+
+    emotionValues.clear();
+    emotionsNames.clear();
     if (useCuda) {
-        std::cout << "Attempt Yolo with CUDA\n";
+        cout << "Attempt Yolo with CUDA\n";
         network.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
         network.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA_FP16);
     }
     else {
-        std::cout << "Running Yolo on CPU with OpenCL if available\n";
+        cout << "Running Yolo on CPU with OpenCL if available\n";
         network.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
         network.setPreferableTarget(cv::dnn::DNN_TARGET_OPENCL);
     }
 }
 
-std::vector<std::string> Model::predict(vector<cv::Mat>image) {
+vector<float> Model::predict(vector<cv::Mat>image) {
     // this takes the region of interest image and then runs model inference
-    std::vector<cv::Mat> roi_image = image;// image.getCvMat();
+   vector<cv::Mat> roi_image = image;// image.getCvMat();
 
-    std::vector<std::string> emotion_prediction;
+  //  vector<float> emotion_prediction;
 
     if (roi_image.size() > 0) { 
         for (int i=0; i < roi_image.size(); i++) {
@@ -44,83 +49,65 @@ std::vector<std::string> Model::predict(vector<cv::Mat>image) {
             // Forward pass on network    
             cv::Mat prob = this->network.forward();
 
+           
             // Sort the probabilities and rank the indicies
-            cv::Mat sorted_probabilities;
-            cv::Mat sorted_ids;
-            cv::sort(prob.reshape(1, 1), sorted_probabilities, cv::SORT_DESCENDING);
-            cv::sortIdx(prob.reshape(1, 1), sorted_ids, cv::SORT_DESCENDING);
+           // cv::Mat sorted_probabilities;
+           // cv::Mat sorted_ids;
+            //cv::sort(prob.reshape(1, 1), sorted_probabilities, cv::SORT_DESCENDING);
+           // cv::sortIdx(prob.reshape(1, 1), sorted_ids, cv::SORT_DESCENDING);
+
+            // Sort the probabilities and rank the indicies
+            cv::Mat unsorted_probabilities;
+            cv::Mat unsorted_ids;
+            unsorted_probabilities = prob.reshape(1, 1);
+
+            //cout<<unsorted_probabilities.size().width<<endl;
+            //unsorted_ids = prob.reshape(1, 1);
+            //prob.reshape(1, 1).copyTo(unsorted_probabilities);
+           // prob.reshape(1, 1).clone()
+            //cv::write(prob.reshape(1, 1), unsorted_probabilities);
+            //cv::copyTo(prob.reshape(1, 1), unsorted_probabilities);
+           // cv::sort(prob.reshape(1, 1), unsorted_probabilities, cv::SORT_EVERY_ROW);
+           // cv::sortIdx(prob.reshape(1, 1), unsorted_ids, cv::SORT_EVERY_ROW);
+           // unsorted_probabilities.total()
+            emotionsNames.clear();
+            emotionValues.clear();
+            for (int i = 0; i< unsorted_probabilities.size().width; i++) {
+                //cout << i<< " unsorted prob" << unsorted_probabilities.at<float>(i) << endl;
+                //cout << i << " emotion prob" << this->classid_to_string.at(unsorted_ids.at<int>(i)) << endl;
+                emotionValues.push_back(unsorted_probabilities.at<float>(i));
+                emotionsNames.push_back(this->classid_to_string.at(i));//unsorted_ids.at<int>(i)
+                
+            }
 
             // Get top probability and top class id
-            float top_probability = sorted_probabilities.at<float>(0);
-            int top_class_id = sorted_ids.at<int>(0);
+            //float top_probability = sorted_probabilities.at<float>(0);
+           // int top_class_id = sorted_ids.at<int>(0);
+
+            
 
             // Map classId to the class name string (ie. happy, sad, angry, disgust etc.)
-            std::string class_name = this->classid_to_string.at(top_class_id);
+            //std::string class_name = this->classid_to_string.at(top_class_id);
 
             // Prediction result string to print
-            std::string result_string = class_name + ": " + std::to_string(top_probability * 100) + "%";
+           // std::string result_string = class_name + ": " + std::to_string(top_probability * 100) + "%";
 
             // Put on end of result vector
-            emotion_prediction.push_back(result_string);
+            //emotion_prediction.push_back(emotionValues)
+           // emotion_prediction.push_back(emotionValues);
 
         }
     }
 
-    return emotion_prediction;
+    return emotionValues;
 
 }
 
-vector<string> Model::predictEmotions(cv::Mat image)
+vector<string> Model::emotionList()
 {
 
-    vector<cv::Mat> roi_image = image;// image.getCvMat();
-
-   vector<string> emotion_prediction;
-
-
-   if (roi_image.size() > 0) {
-       for (int i = 0; i < roi_image.size(); i++) {
-           // Convert to blob
-           cv::Mat blob = cv::dnn::blobFromImage(roi_image[i]);
-
-           // Pass blob to network
-           this->network.setInput(blob);
-
-           // Forward pass on network    
-           cv::Mat prob = this->network.forward();
-
-
-       
-           // Sort the probabilities and rank the indicies
-           cv::Mat sorted_probabilities;
-           cv::Mat sorted_ids;
-           cv::sort(prob.reshape(1, 1), sorted_probabilities, cv::SORT_DESCENDING);
-           cv::sortIdx(prob.reshape(1, 1), sorted_ids, cv::SORT_DESCENDING);
-
-           // Get top probability and top class id
-           float top_probability = sorted_probabilities.at<float>(0);
-           int top_class_id = sorted_ids.at<int>(0);
-
-           // Map classId to the class name string (ie. happy, sad, angry, disgust etc.)
-           string class_name = this->classid_to_string.at(top_class_id);
-
-           // Prediction result string to print
-           string result_string = class_name + ": " + to_string(top_probability * 100) + "%";
-
-           // Put on end of result vector
-           emotion_prediction.push_back(result_string);
-
-           for (int j = 0; j < this->classid_to_string.size(); j++) {
-           
-
-           
-           }
-
-
-       }
-   }
-
-    return emotion_prediction;
+    return emotionsNames;
 }
+
 
 

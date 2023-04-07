@@ -28,5 +28,7 @@ class ofApp : public ofBaseApp{
 		Model model{ TENSORFLOW_MODEL_PATH };
 		ofVideoGrabber grabber;
 		ofxCvColorImage	colorImg;
-		vector<string>emotion_prediction;
+		ofxCvGrayscaleImage bwImg;
+		vector<string>emotion_prediction_name;
+		vector<float>emotion_prediction_val;
 };
